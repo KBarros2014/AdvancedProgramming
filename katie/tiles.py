@@ -9,7 +9,7 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 
-class Tiles:
+class Tile:
     Foyer = 0
     FamilyRoom = 1
     StorageRoom = 2
