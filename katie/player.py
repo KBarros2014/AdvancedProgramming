@@ -9,8 +9,13 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 class Player(object):
+    def __init__(self, health = 6):
+     self.health = health
 
 
-
-
+    def run():
+        print ("running away")
+        health -+1
+    def fight() :
+        print ("fignt")
 }
