@@ -48,7 +48,7 @@ class Devcard:
 
 class main:
 
-    temp_DevCard = devcard()
+    temp_DevCard = Devcard()
 
     # Test
     print(temp_DevCard.pick_card())
