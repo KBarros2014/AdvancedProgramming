@@ -46,37 +46,16 @@ class Devcard:
                    self.message[return_number])
 
 
-class main:
+#class main():
+#
+#   temp_DevCard = Devcard()
+#
+#    # Test
+#    print(temp_DevCard.pick_card())
+#    print(temp_DevCard.pick_card())
+#    print(temp_DevCard.pick_card())
+#    print(temp_DevCard.pick_card())
+#    print(temp_DevCard.pick_card())
 
-    temp_DevCard = Devcard()
-
-    # Test
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-    print(temp_DevCard.pick_card())
-
-if __name__ == "__main__":
-    main
+#if __name__ == "__main__":
+#    main

@@ -2,7 +2,7 @@ __author__ = 'siggyzee'
 
 
 class Tile:
-    def __init__(self, name = "", north = 0, east = 0, south = 0, west = 0):
+    def __init__(self, name = "", north = "", east = "", south = "", west = ""):
         self.type = False
         self.name = name
         self.north = north
