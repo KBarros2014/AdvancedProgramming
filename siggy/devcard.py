@@ -3,7 +3,7 @@ __author__ = 'siggyzee'
 from random import randint
 
 
-class devcard:
+class Devcard:
     # amount a cards drawn
     card_count = 0
     # current time in the game 8 = 8.00pm etc...
@@ -33,17 +33,17 @@ class devcard:
         if (return_type == 0):
             return_number = randint(0, len(self.item) - 1)
             return(self.game_time, 0,
-                   self.item[return_number], 0, '')
+                   self.item[return_number])
         # return a number of zombies
         if (return_type == 1):
             return_number = randint(0, len(self.number_of_zombies) - 1)
             return(self.game_time, 1,
-                   '', self.number_of_zombies[return_number], '')
+                   self.number_of_zombies[return_number])
         # return a message
         if (return_type == 2):
             return_number = randint(0, len(self.message) - 1)
             return(self.game_time, 2,
-                   '', 0, self.message[return_number])
+                   self.message[return_number])
 
 
 class main:

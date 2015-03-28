@@ -1,7 +1,11 @@
 __author__ = 'siggyzee'
 import cmd
+from siggy.game import *
 
 class main_cmd(cmd.Cmd):
+
+    def __init__(self):
+        self.game = Game("Foyer", 8)
 
     def do_move(self, direction):
         print("move", direction)
@@ -39,7 +43,7 @@ class main_cmd(cmd.Cmd):
         print("quit			    - Quit game.")
         print("")
 
-    def  do_quit(self, line):
+    def do_quit(self, line):
         return True
 
 
