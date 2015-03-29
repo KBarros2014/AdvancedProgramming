@@ -8,8 +8,8 @@ class Devcard:
     card_count = 0
     # current time in the game 8 = 8.00pm etc...
     game_time = 8
-    item = ['Board with Nails', 'Machete', 'Grisly Femur',
-            'Golf Club', 'Chainsaw', 'Can of Soda']
+    item = ['board_with_nails', 'machete', 'grisly_femur',
+            'golf_club', 'chainsaw']
     number_of_zombies = [6, 4, 4, 4, 6, 5, 4, 3, 5, 4, 4]
     message = ['You try hard not to wet yourself',
                'You sense your impending DOOM',

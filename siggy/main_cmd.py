@@ -11,19 +11,23 @@ class main_cmd(cmd.Cmd):
 
     def do_move(self, direction):
         print("move", direction)
-        self.game.move_player(direction)
+        result = self.game.move_player(direction)
+        if (result == False): print("You can’t move in that direction.")
 
     def do_run(self, direction):
         print("run ", direction)
 
     def do_attack(self, line):
         print("attack")
+        self.game.attack()
 
     def do_cower(self, line):
         print("cower")
 
     def do_get_item(self, line):
-        print("get item")
+        print("get_item")
+        result = self.game.get_item()
+        if (result == False): print("There is no item in the current room.")
 
     def do_get_totem(self, line):
         print("get totem")
