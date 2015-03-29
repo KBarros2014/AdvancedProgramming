@@ -1,6 +1,9 @@
 __author__ = 'siggyzee'
 
 
+# this code is no longer valid due to class diagram refactoring
+
+"""
 class Player:
     health = 6
     player_location = 'foyer'
@@ -38,4 +41,4 @@ class Player:
             if (self.map[self.player_location].west != 'nothing'):
                 self.player_location = self.map[self.player_location].west
 
-
+"""

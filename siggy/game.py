@@ -3,7 +3,8 @@ from enum import Enum
 
 from siggy.tile import Tile
 from siggy.devcard import Devcard
-from siggy.player import Player
+
+#from siggy.player import Player
 
 
 class Game:
@@ -12,9 +13,13 @@ class Game:
     game_time = 8
     devcard_controller = None
     player = None
-    player_location = None
+    player_location = 'foyer'
+    health = 6
+    attack_strength = 1
+    has_zombie_totem = False
+    item = ""
 
-    def __init__(self, tile, time):
+    def __init__(self):
 
         # Load rooms
         self.roomsDict = {}
@@ -35,14 +40,6 @@ class Game:
         # load Devcard_controller
         devcard_controller = Devcard
 
-        # load player
-        self.player = Player(self.map)
-
-        # set current room
-        self.player_location = tile
-
-        # set current time
-        self.game_time = time
 
         # display initial game state
         self.display_game_state()
@@ -61,34 +58,50 @@ class Game:
     # print out the current game state
     def display_game_state(self):
         # print locaiton and time information
-        print("Location " + self.player.player_location + ", Time " + str(self.game_time) + ".00pm")
+        print("Location " + self.player_location + ", Time " + str(self.game_time) + ".00pm")
         # print item information
-        if (self.map[self.player.player_location].item == ""):
+        if (self.map[self.player_location].item == ""):
             print("There is no item on the floor")
         else:
-            print("There is a " + self.map[self.player.player_location].item + "on the floor")
+            print("There is a " + self.map[self.player_location].item + "on the floor")
         # number of zombies in the room
-        print("There is " + str(self.map[self.player.player_location].zombies) + " zombies in the room")
+        print("There is " + str(self.map[self.player_location].zombies) + " zombies in the room")
         # movement options
-        print("North there is " + self.map[self.player.player_location].north + ", East there is " + self.map[self.player.player_location].east + ", South there is " + self.map[self.player.player_location].south + ", West there is " + self.map[self.player.player_location].west)
+        print("North there is " + self.map[self.player_location].north + ", East there is " + self.map[self.player_location].east + ", South there is " + self.map[self.player_location].south + ", West there is " + self.map[self.player_location].west)
         # print health and attack strength
-        print("Your health is " + str(self.player.health) + ", Your attack is " + str(self.player.attack_strength))
+        print("Your health is " + str(self.health) + ", Your attack is " + str(self.attack_strength))
         # print current item
-        if (self.player.item == ""):
+        if (self.item == ""):
             print("Your not holding an item")
         else:
-            print("Your holding a " + self.player.item)
+            print("Your holding a " + self.item)
         # print the zombie totem
-        if (self.player.has_zombie_totem == False):
+        if (self.has_zombie_totem == False):
             print("Your don't have the Zombie Totem")
         else:
             print("Your have the Zombie Totem")
 
     def move_player(self, direction):
-        self.player.move(direction)
-        # self.withdraw_devcard()
-        self.display_game_state()
 
+        # Old code no longer needed.
+        # self.player.move(direction)
+        # self.withdraw_devcard()
+
+
+        print("move " + direction)
+        if (direction == 'north'):
+            if (self.map[self.player_location].north != 'nothing'):
+                self.player_location = self.map[self.player_location].north
+        if (direction == 'east'):
+            if (self.map[self.player_location].east != 'nothing'):
+                self.player_location = self.map[self.player_location].east
+        if (direction == 'south'):
+            if (self.map[self.player_location].south != 'nothing'):
+                self.player_location = self.map[self.player_location].south
+        if (direction == 'west'):
+            if (self.map[self.player_location].west != 'nothing'):
+                self.player_location = self.map[self.player_location].west
+        self.display_game_state()
 
 
 

@@ -7,7 +7,7 @@ class main_cmd(cmd.Cmd):
 
     def new_game(self):
         print("hi")
-        self.game = Game("Foyer", 8)
+        self.game = Game()
 
     def do_move(self, direction):
         print("move", direction)
@@ -49,8 +49,11 @@ class main_cmd(cmd.Cmd):
     def do_quit(self, line):
         return True
 
-
-if __name__ == "__main__":
+def main():
     cmd_temp = main_cmd()
     cmd_temp.new_game()
     cmd_temp.cmdloop()
+
+
+if __name__ == "__main__":
+    main()
