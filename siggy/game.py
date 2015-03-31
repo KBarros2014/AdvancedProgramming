@@ -15,21 +15,22 @@ class Game:
     game_time = 8
     devcard_controller = None
     player = None
-    player_location = 'foyer'
+    player_location = 'Foyer'
     health = 6
     attack_strength = 1
     has_zombie_totem = False
     item = ""
+    card_count = 0
 
     def __init__(self):
 
         # Load rooms
-        foyer = Tile('foyer', 'dining_room', 'nothing', 'nothing', 'nothing')
-        dining_room = Tile('dining_room', 'patio', 'evil_temple', 'foyer', 'nothing')
-        evil_temple = Tile('evil_temple', 'nothing', 'nothing', 'nothing', 'dining_room')
-        patio = Tile('patio', 'yard', 'nothing', 'dining_room', 'nothing', '', 2)
-        yard = Tile('yard', 'nothing', 'nothing', 'patio', 'grave_yard', 'board_with_nails', 3)
-        grave_yard = Tile('grave_yard', 'nothing', 'yard', 'nothing', 'nothing', '', 1)
+        foyer = Tile('Foyer', 'Dining Room', 'blocked', 'blocked', 'blocked')
+        dining_room = Tile('Dining Room', 'Patio', 'Evil Temple', 'Foyer', 'blocked')
+        evil_temple = Tile('Evil Temple', 'blocked', 'blocked', 'blocked', 'Dining Room')
+        patio = Tile('Patio', 'Yard', 'blocked', 'Dining Room', 'blocked', '', 2)
+        yard = Tile('Yard', 'blocked', 'blocked', 'Patio', 'Graveyard', 'Board with Nails', 3)
+        grave_yard = Tile('Graveyard', 'blocked', 'Yard', 'blocked', 'blocked', '', 1)
         self.map[foyer.name] = foyer
         self.map[dining_room.name] = dining_room
         self.map[evil_temple.name] = evil_temple
@@ -38,11 +39,11 @@ class Game:
         self.map[grave_yard.name] = grave_yard
 
         # Load items
-        self.items['board_with_nails'] = 1
-        self.items['grisly_femur'] = 1
-        self.items['golf_club'] = 1
-        self.items['chainsaw'] = 3
-        self.items['machete'] = 2
+        self.items['Board with Nails'] = 1
+        self.items['Grisly Femur'] = 1
+        self.items['Golf Club'] = 1
+        self.items['Chainsaw'] = 3
+        self.items['Machete'] = 2
 
 
         # load Devcard_controller
@@ -56,13 +57,14 @@ class Game:
     # returns message if given
     def withdraw_devcard(self):
         cardInfo = self.devcard_controller.pickCard()
-        self.game_time = cardInfo[0]
-        if cardInfo[1] == 0:
-            self.map[self.player_location].item = cardInfo[2]
-        if cardInfo[1] == 1:
-            self.map[self.player_location].zombies = cardInfo[2]
-        if cardInfo[1] == 2:
-            return cardInfo[3]
+        if cardInfo[0] == 0:
+            self.map[self.player_location].item = cardInfo[1]
+        if cardInfo[0] == 1:
+            self.map[self.player_location].zombies = cardInfo[1]
+        if cardInfo[0] == 2:
+            return print(cardInfo[1])
+        self.update_game_time()
+        self.check_game_end_condition()
 
 
     # display_game_state
@@ -118,24 +120,25 @@ class Game:
             print("You can't move normally while zombies are present.")
             return False
         if (direction == 'north'):
-            if (self.map[self.player_location].north != 'nothing'):
+            if (self.map[self.player_location].north != 'blocked'):
                 self.player_location = self.map[self.player_location].north
             else: return False
         if (direction == 'east'):
-            if (self.map[self.player_location].east != 'nothing'):
+            if (self.map[self.player_location].east != 'blocked'):
                 self.player_location = self.map[self.player_location].east
             else: return False
         if (direction == 'south'):
-            if (self.map[self.player_location].south != 'nothing'):
+            if (self.map[self.player_location].south != 'blocked'):
                 self.player_location = self.map[self.player_location].south
             else: return False
         if (direction == 'west'):
-            if (self.map[self.player_location].west != 'nothing'):
+            if (self.map[self.player_location].west != 'blocked'):
                 self.player_location = self.map[self.player_location].west
             else: return False
         # if player moved update game state
         self.display_game_state()
         return True
+
 
     # get_item()
     #   pickup and item from the floor in a tile
@@ -154,6 +157,7 @@ class Game:
         self.map[self.player_location].item = ""
         self.display_game_state()
         return True
+
 
     # attack()
     #   attach zombies currently in the room
@@ -187,7 +191,22 @@ class Game:
         if self.health <= 0:
             print("Zombies have eaten your brains - Game Over.")
             sys.exit()
+        if self.game_time == 12:
+            print("You have been over run by the zombie horde - Game Over")
+            sys.exit()
         return True
+
+
+    # update_game_time()
+    #
+    #
+    def update_game_time(self):
+        # update card stack and time
+        self.card_count += 1
+        if (self.card_count >= 8):
+            self.game_time += 1
+            self.card_count = 1
+
 
 
 
