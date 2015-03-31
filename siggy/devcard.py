@@ -18,7 +18,6 @@ class Devcard:
                'You feel a sparkle of Hope']
 
     def pick_card(self):
-
         # radomly pick and return dev card values
         return_type = randint(0, 2)
         # return  an item

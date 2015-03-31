@@ -12,22 +12,33 @@ class main_cmd(cmd.Cmd):
     def do_move(self, direction):
         print("move", direction)
         result = self.game.move_player(direction)
-        if (result == False): print("You can’t move in that direction.")
+        if (result == False): print("You can’t move in that direction or when there are zombies in the room.")
+        if (result == True): print("You move " + direction + ".")
 
     def do_run(self, direction):
         print("run ", direction)
+        result = self.game.run(direction)
+        if (result == False): print("You can’t run in that direction or when there are no zombies in the room.")
+        if (result == True): print("You run " + direction + ".")
 
     def do_attack(self, line):
         print("attack")
-        self.game.attack()
+        result = self.game.attack()
+        if (result == False): print("You can't attack when there are no zombies.")
+        if (result == True): print("You survived the zombie attack!!")
 
     def do_cower(self, line):
         print("cower")
+        result = self.game.cower()
+        if (result == False): print("You cower when there is zombies in the room.")
+        if (result == True): print("You cower and regain +3 health.")
 
     def do_get_item(self, line):
         print("get_item")
         result = self.game.get_item()
         if (result == False): print("There is no item in the current room.")
+        if (result == True): print("You picked up the item")
+
 
     def do_get_totem(self, line):
         print("get totem")
