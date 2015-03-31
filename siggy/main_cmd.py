@@ -42,9 +42,15 @@ class main_cmd(cmd.Cmd):
 
     def do_get_totem(self, line):
         print("get totem")
+        result = self.game.get_totem()
+        if (result == False): print("You can't retrieve the Zombie totem unless you are in the Evil Temple and there are no Zombies.")
+        if (result == True): print("You picked up the Zombie totem")
 
     def do_bury_totem(self, line):
         print("bury totem")
+        result = self.game.bury_totem()
+        if (result == False): print("You can only bury the totem in the Graveyard when there are no Zombies.")
+        if (result == True): print("Something is BOKE this should never EVER happen WTF have you done!!!!")
 
     def do_help(self, line):
         print("Zimp - Help")

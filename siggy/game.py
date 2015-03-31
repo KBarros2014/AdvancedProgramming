@@ -121,6 +121,8 @@ class Game:
     def move_player(self, direction):
         if (self.all_tiles[self.player_location].zombies != 0):
             return False
+        if (direction != 'north' and direction !=  'east' and direction !=  'south' and direction !=  'west'):
+            return False
         if (direction == 'north'):
             if (self.all_tiles[self.player_location].north != 'blocked'):
                 self.player_location = self.all_tiles[self.player_location].north
@@ -216,6 +218,8 @@ class Game:
     def run(self, direction):
         if (self.all_tiles[self.player_location].zombies == 0):
             return False
+        if (direction != 'north' and direction !=  'east' and direction !=  'south' and direction !=  'west'):
+            return False
         if (direction == 'north'):
             if (self.all_tiles[self.player_location].north != 'blocked'):
                 self.player_location = self.all_tiles[self.player_location].north
@@ -244,6 +248,25 @@ class Game:
         self.player_health += 3
         self.display_game_state()
         return True
+
+    def get_totem(self):
+        if (self.player_location != 'Evil Temple'):
+            return False
+        self.has_zombie_totem = True;
+        self.display_game_state()
+        return True
+
+
+    def bury_totem(self):
+        if (self.player_location != 'Graveyard'):
+            return False
+        if (self.all_tiles[self.player_location].zombies != 0):
+            return False
+        if (self.has_zombie_totem == True):
+            print("You win. The veil of darkness has lifted, the smell of death leaves!!")
+            sys.exit()
+        return False
+
 
 
 
