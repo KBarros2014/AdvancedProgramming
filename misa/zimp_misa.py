@@ -2,6 +2,7 @@ __author__ = 'Misa'
 
 import cmd
 import random
+import sys
 
 
 class Controller(cmd.Cmd):
@@ -19,25 +20,54 @@ class Controller(cmd.Cmd):
         pass
 
     def do_attack(self, line):
-        self.game.attack()
+        if self.game.attack():
+            print ("\nYou survived the zombie attack")
+            self.game.display_game_status()
+        else:
+            print ("\nFortunately there are no zombies here\n")
 
     def do_run(self, direction):
-        pass
+        if self.game.run(direction):
+            print ("\nYou ran away from the zombies. You got scratched!")
+            self.game.display_game_status()
+        else:
+            print ("\nThere seen to be no zombies. Calm yourself\n")
 
     def do_cower(self, line):
-        self.game.cower()
+        if self.game.cower():
+            print ("\nYou hid in the corner and rested a while")
+            self.game.display_game_status()
+        else:
+            print ("\nThere are zombies here!\n")
 
     def do_move(self, direction):
-        self.game.move(direction)
+        validate = self.game.check_direction(direction)
+        if validate:
+            if self.game.move(direction):
+                print ("\nYou are moving to " + self.game.player_location.name)
+                self.game.display_game_status()
+        else:
+            print ("\nYou can't do that!\n")
 
     def do_get_totem(self, line):
-        self.game.get_totem()
+        if self.game.get_totem():
+            print ("You found the Zombie Totem!!")
+            self.game.display_game_status()
+        else:
+            print ("\nThe Zombie Totem will be in the Evil Temple, not here!\n")
 
     def do_bury_totem(self, line):
-        self.game.bury_totem()
+        if self.game.bury_totem():
+            print ("\nYou have successfully buried the Zombie Totem!\n")
+            sys.exit()
+        else:
+            print ("\nYou can't do that!\n")
 
     def do_get_item(self, line):
-        self.game.get_item()
+        if self.game.get_item():
+            self.game.display_game_status()
+        else:
+            print ("\nYou couldn't find anything useful\n")
 
     def do_save(self, line):
         pass
@@ -50,12 +80,14 @@ class Game():
     def __init__(self):
         self.game_time = 9
         self.count_cards = 0
-        self.all_tiles = {"Foyer": Tile("Foyer", "Dining Room", "Blocked", "Blocked", "Blocked", 0, None),
-                          "Dining Room": Tile("Dining Room", "Patio", "Foyer", "Blocked", "Evil Temple", 0, None),
-                          "Evil Temple": Tile("Evil Temple", "Blocked", "Blocked", "Dining Room", "Blocked", 0, None),
-                          "Patio": Tile("Patio", "Yard", "Dining Room", "Blocked", "Blocked", 0, None),
-                          "Yard": Tile("Yard", "Blocked", "Patio", "Blocked", "Graveyard", 0, None),
-                          "Graveyard": Tile("Graveyard", "Blocked", "Blocked", "Blocked", "Yard", 0, None)}
+        self.all_tiles = {
+            "Foyer": Tile("Foyer", "Dining Room", "Blocked", "Blocked", "Blocked", 6, "Board with Nails"),
+            "Dining Room": Tile("Dining Room", "Patio", "Foyer", "Blocked", "Evil Temple", 0, "nothing"),
+            "Evil Temple": Tile("Evil Temple", "Blocked", "Blocked", "Dining Room", "Blocked", 0, "nothing"),
+            "Patio": Tile("Patio", "Yard", "Dining Room", "Blocked", "Blocked", 0, "nothing"),
+            "Yard": Tile("Yard", "Blocked", "Patio", "Blocked", "Graveyard", 0, "nothing"),
+            "Graveyard": Tile("Graveyard", "Blocked", "Blocked", "Blocked", "Yard", 0, "nothing")
+            }
         self.all_items = {"Board with Nails": 1, "Machete": 2, "Grisly Femur": 1, "Golf Club": 1, "Chainsaw": 3}
         self.player_location = self.all_tiles.get("Foyer")
         self.player_health = 6
@@ -69,11 +101,12 @@ class Game():
             self.player_item = self.player_location.item
             item_strength = self.all_items.get(self.player_item)
             self.player_attack += item_strength
+            print ("\nYou found a " + self.player_location.item)
+            self.player_location.item = "nothing"
             self.update_game_time()
-            self.display_game_status()
-            print ("You found a " + self.player_location.item + "\n")
+            return True
         else:
-            print ("\nYou couldn't find anything useful\n")
+            return False
 
     def withdraw_card(self):
         random_card = self.devcard.pick_card()
@@ -83,25 +116,25 @@ class Game():
         elif random_card[0] == 1:
             self.player_location.zombies = random_card[1]
         else:
-            print (random_card[1])
+            print ("\n" + random_card[1])
 
         self.update_game_time()
         self.check_game_end_condition()
 
     def display_game_status(self):
         current_room = self.player_location.name
-        north_room = self.all_tiles.get(current_room).north
-        south_room = self.all_tiles.get(current_room).south
-        east_room = self.all_tiles.get(current_room).east
-        west_room = self.all_tiles.get(current_room).west
+        north_room = self.all_tiles.get(current_room).direction.get("North")
+        south_room = self.all_tiles.get(current_room).direction.get("South")
+        east_room = self.all_tiles.get(current_room).direction.get("East")
+        west_room = self.all_tiles.get(current_room).direction.get("West")
 
-        print ("\n========================\nYou are in the %s \nThe time is %ipm \n\n" \
-              "Your Health is %s \nYour Attack is %i \n\nYou have %s with you \n" \
-              "There is a %s on the ground \nThere are %i zombies \n\n---Connections from this room---\n" \
-              "North Room is %s \nSouth Room is %s \nEast Room is %s \nWest Room is %s \n" \
-              % (current_room, self.game_time, self.player_health, self.player_attack,
-                 self.player_item, self.player_location.item, self.player_location.zombies,
-                 north_room, south_room, east_room, west_room))
+        print ("\n========================\nYou are in the %s \nThe time is %ipm \n"
+               "\nYour Health is %s \nYour Attack is %i \n\nYou have %s with you \n"
+               "There is a %s on the ground \nThere are %i zombies \n\n---Connections from this room---\n"
+               "North Room is %s \nSouth Room is %s \nEast Room is %s \nWest Room is %s \n"
+               % (current_room, self.game_time, self.player_health, self.player_attack,
+                  self.player_item, self.player_location.item, self.player_location.zombies,
+                  north_room, south_room, east_room, west_room))
         if self.has_zombie_totem:
             print ("You have the Zombie Totem and now you need to go to the Graveyard\n========================\n")
         else:
@@ -109,98 +142,97 @@ class Game():
 
     def attack(self):
         numbers_of_zombies = self.player_location.zombies
+        damage = numbers_of_zombies - self.player_attack
+        if damage > 4:
+            damage = 4
         if numbers_of_zombies > 0:
-            self.player_health -= numbers_of_zombies
+            self.player_health -= damage
             self.player_location.zombies = 0
             self.check_game_end_condition()
-            self.display_game_status()
-            print ("\nYou survive the zombie attack\n")
+            return True
         else:
-            print ("\nFortunately there are no zombies here\n")
+            return False
 
     def run(self, direction):
-        pass
+        current_room = self.player_location
+        if current_room.zombies > 0:
+            current_room.zombies = 0
+            self.player_health -= 1
+            self.move(direction)
+            return True
+        else:
+            return False
 
     def cower(self):
         if self.player_location.zombies <= 0:
             self.update_game_time()
             self.player_health += 3
-            self.display_game_status()
-            print ("You hid in the corner and rested a while\n")
+            return True
         else:
-            print ("\nThere are zombies here!\n")
+            return False
+
+    def check_direction(self, direction):
+        current_room = self.player_location
+        connection = {
+            "north": self.all_tiles.get(current_room.name).direction.get("North"),
+            "south": self.all_tiles.get(current_room.name).direction.get("South"),
+            "east": self.all_tiles.get(current_room.name).direction.get("East"),
+            "west": self.all_tiles.get(current_room.name).direction.get("West")
+            }
+        next_room = connection.get(direction)
+        if next_room is "Blocked":
+            return False
+        else:
+            return True
 
     def move(self, direction):
         current_room = self.player_location
         if current_room.zombies == 0:
-            if direction == "north":
-                next_room = self.all_tiles.get(current_room.name).north
-                if next_room == "Blocked":
-                    print ("\nIt's blocked\n")
-                else:
-                    self.player_location = self.all_tiles[next_room]
-                    self.withdraw_card()
-                    self.display_game_status()
-
-            if direction == "south":
-                next_room = self.all_tiles.get(current_room.name).south
-                if next_room == "Blocked":
-                    print ("\nIt's blocked\n")
-                else:
-                    self.player_location = self.all_tiles[next_room]
-                    self.withdraw_card()
-                    self.display_game_status()
-
-            if direction == "east":
-                next_room = self.all_tiles.get(current_room.name).east
-                if next_room == "Blocked":
-                    print ("\nIt's blocked\n")
-                else:
-                    self.player_location = self.all_tiles[next_room]
-                    self.withdraw_card()
-                    self.display_game_status()
-
-            if direction == "west":
-                next_room = self.all_tiles.get(current_room.name).west
-                if next_room == "Blocked":
-                    print ("\nIt's blocked\n")
-                else:
-                    self.player_location = self.all_tiles[next_room]
-                    self.withdraw_card()
-                    self.display_game_status()
+            connection = {
+                "north": self.all_tiles.get(current_room.name).direction.get("North"),
+                "south": self.all_tiles.get(current_room.name).direction.get("South"),
+                "east": self.all_tiles.get(current_room.name).direction.get("East"),
+                "west": self.all_tiles.get(current_room.name).direction.get("West")
+                }
+            next_room = connection.get(direction)
+            self.player_location = self.all_tiles[next_room]
+            self.withdraw_card()
+            return True
         else:
             print ("\nThere are zombies in the room!\n")
+            return False
 
     def check_game_end_condition(self):
         if self.player_health <= 0:
             print("\nZombies have eaten your brains. Game over!\n")
-            return True
+            sys.exit()
         elif self.game_time >= 12:
             print("\nYou have run out of time and been overrun by the zombie horde. Game over!\n")
-            return True
+            sys.exit()
         return False
 
     def get_totem(self):
         if self.player_location.name == "Evil Temple":
             self.has_zombie_totem = True
-            self.display_game_status()
+            return True
         else:
-            print ("\nThe Zombie Totem will be in the Evil Temple, not here!\n")
+            return False
 
     def bury_totem(self):
         if self.player_location == "Graveyard":
             if self.player_location.zombies == 0:
                 if self.has_zombie_totem:
-                    print ("\nYou have successfully buried the Zombie Totem!\n")
+                    return True
         else:
-            print ("\nYou can't do that!\n")
+            return False
 
     def update_game_time(self):
         self.count_cards += 1
-        if self.count_cards >= 8:
+        if self.count_cards >= 3:
             self.game_time += 1
             self.count_cards = 0
-            print ("It is now %ipm" % self.game_time)
+            print ("\nIt is now %ipm" % self.game_time)
+            self.check_game_end_condition()
 
     def save(self):
         pass
@@ -212,10 +244,7 @@ class Game():
 class Tile():
     def __init__(self, name, north, south, east, west, zombies, item):
         self.name = name
-        self.north = north
-        self.south = south
-        self.east = east
-        self.west = west
+        self.direction = {"North": north, "South": south, "East": east, "West": west}
         self.zombies = zombies
         self.item = item
 
@@ -251,4 +280,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
