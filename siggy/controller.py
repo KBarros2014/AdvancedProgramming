@@ -9,6 +9,7 @@ class main_cmd(cmd.Cmd):
         print("hi")
         self.game = Game()
 
+
     def do_move(self, direction):
         print("move", direction)
         result = self.game.move_player(direction)

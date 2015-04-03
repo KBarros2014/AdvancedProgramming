@@ -26,7 +26,6 @@ class Game:
     card_count = 0
 
     def __init__(self):
-        print("Hi");
         # Load rooms
         foyer = Tile('Foyer', 'Dining Room', 'blocked', 'blocked', 'blocked')
         dining_room = Tile('Dining Room', 'Patio', 'Evil Temple', 'Foyer', 'blocked')
@@ -59,7 +58,7 @@ class Game:
         print(self.player_location.name)
 
         # display initial game state
-        self.display_game_state()
+
 
     # returns message if given
     def withdraw_devcard(self):
