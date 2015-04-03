@@ -1,0 +1,23 @@
+Hey,
+
+Just two updates to our software layout.
+
+As oppose to calling display_game_state() inside the game class after
+each method has been called, call it from the controller class if a method such as move() returns true
+this means messages will show up in the right order.
+
+Look at Misa's code to see an example.
+
+Secondly
+Storing the north, east, south and west connections in the tile class makes the decision making
+more complex with if statements when it comes to moving. When each connection is stored as a string
+there had to be 4 seperate if statements at least to do the move function. Using a map of strings to
+do this reduces this to a single if and a single line of code.
+
+I.e.
+
+if (direction != 'north' and direction !=  'east' and direction !=  'south' and direction !=  'west'):
+    self.player_location = self.all_tiles[self.player_location].connections[direction]
+
+
+Siggy.
