@@ -5,5 +5,5 @@ class Tile:
     def __init__(self, name="", north="", east="", south="", west=""):
         self.type = False
         self.name = name
-        self.direction = {"North":  north, "South": south,
+        self.direction = {"North": north, "South": south,
                           "East": east, "West": west}
