@@ -32,19 +32,3 @@ class Devcard:
         if (return_type == 2):
             return_number = randint(0, len(self.message) - 1)
             return(2, self.message[return_number])
-
-
-
-#class main():
-#
-#   temp_DevCard = Devcard()
-#
-#    # Test
-#    print(temp_DevCard.pick_card())
-#    print(temp_DevCard.pick_card())
-#    print(temp_DevCard.pick_card())
-#    print(temp_DevCard.pick_card())
-#    print(temp_DevCard.pick_card())
-
-#if __name__ == "__main__":
-#    main
