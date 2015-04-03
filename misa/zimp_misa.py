@@ -87,7 +87,6 @@ class Controller(cmd.Cmd):
         Save the current game state to Save folder with given name.
         Uses savedata as default file name if no name given.
         """
-
         if len(line) == 0:
             line = "savedata"
         output = open("Save/" + line, "wb")
@@ -125,7 +124,7 @@ class Game():
             "Graveyard": Tile("Graveyard", "blocked", "blocked", "blocked", "Yard", 0, "nothing")
             }
         self.all_items = {"Board with Nails": 1, "Machete": 2, "Grisly Femur": 1, "Golf Club": 1, "Chainsaw": 3}
-        self.player_location = "Foyer"
+        self.player_location = self.all_tiles.get("Foyer")
         self.player_health = 6
         self.player_attack = 1
         self.player_item = "nothing"
@@ -134,7 +133,7 @@ class Game():
 
     def get_item(self):
         if self.player_location.item is not "nothing":
-            self.player_item = self.all_tiles[self.player_location].item
+            self.player_item = self.player_location.item
             item_strength = self.all_items.get(self.player_item)
             self.player_attack += item_strength
             print ("\nYou found a " + self.player_item)
@@ -148,9 +147,9 @@ class Game():
         random_card = self.devcard.pick_card()
 
         if random_card[0] == 0:
-            self.all_tiles[self.player_location].item = random_card[1]
+            self.player_location.item = random_card[1]
         elif random_card[0] == 1:
-            self.all_tiles[self.player_location].zombies = random_card[1]
+            self.player_location.zombies = random_card[1]
         else:
             print ("\n" + random_card[1])
 
@@ -158,7 +157,7 @@ class Game():
         self.check_game_end_condition()
 
     def display_game_status(self):
-        current_room = self.all_tiles[self.player_location].name
+        current_room = self.player_location.name
         north_room = self.all_tiles.get(current_room).direction.get("North")
         south_room = self.all_tiles.get(current_room).direction.get("South")
         east_room = self.all_tiles.get(current_room).direction.get("East")
@@ -169,7 +168,7 @@ class Game():
                "There is a %s on the ground \nThere are %i zombies \n\n---Connections from this room---\n"
                "North Room is %s \nSouth Room is %s \nEast Room is %s \nWest Room is %s \n"
                % (current_room, self.game_time, self.player_health, self.player_attack,
-                  self.player_item, self.all_tiles[self.player_location].item, self.all_tiles[self.player_location].zombies,
+                  self.player_item, self.player_location.item, self.player_location.zombies,
                   north_room, south_room, east_room, west_room))
         if self.has_zombie_totem:
             print ("You have the Zombie Totem and now you need to go to the Graveyard\n========================\n")
@@ -177,35 +176,35 @@ class Game():
             print ("You need to go to Evil Temple and search for the Zombie Totem\n========================\n")
 
     def attack(self):
-        numbers_of_zombies = self.all_tiles[self.player_location].zombies
+        numbers_of_zombies = self.player_location.zombies
         damage = numbers_of_zombies - self.player_attack
         if damage > 4:
             damage = 4
         if numbers_of_zombies > 0:
             self.player_health -= damage
-            self.all_tiles[self.player_location].zombies = 0
+            self.player_location.zombies = 0
             self.check_game_end_condition()
             return True
         else:
             return False
 
     def run(self, direction):
-        current_room = self.all_tiles[self.player_location].name
-        zombies_in_room = self.all_tiles[self.player_location].zombies
-        next_room = self.all_tiles.get(current_room).direction.get(direction.capitalize())
+        current_room = self.player_location
+        zombies_in_room = self.player_location.zombies
+        next_room = current_room.direction.get(direction.capitalize())
         if direction != "north" and direction != "east" and direction != "south" and direction != "west":
             print ("\nMove to where? Give direction: north, south, east or west\n")
             return False
         if zombies_in_room > 0 and next_room is not "blocked":
             self.player_health -= 1
-            self.player_location = self.all_tiles[next_room].name
+            self.player_location = self.all_tiles[next_room]
             self.withdraw_card()
             return True
         else:
             return False
 
     def cower(self):
-        if self.all_tiles[self.player_location].zombies <= 0:
+        if self.player_location.zombies <= 0:
             self.update_game_time()
             self.player_health += 3
             return True
@@ -213,14 +212,14 @@ class Game():
             return False
 
     def move(self, direction):
-        current_room = self.all_tiles[self.player_location].name
-        zombies_in_room = self.all_tiles[self.player_location].zombies
-        next_room = self.all_tiles.get(current_room).direction.get(direction.capitalize())
+        current_room = self.player_location
+        zombies_in_room = self.player_location.zombies
+        next_room = current_room.direction.get(direction.capitalize())
         if direction != "north" and direction != "east" and direction != "south" and direction != "west":
             print ("\nMove to where? Give direction: north, south, east or west\n")
             return False
         if zombies_in_room == 0 and next_room is not "blocked":
-            self.player_location = self.all_tiles[next_room].name
+            self.player_location = self.all_tiles[next_room]
             self.withdraw_card()
             return True
         else:
@@ -237,14 +236,14 @@ class Game():
         return False
 
     def get_totem(self):
-        if self.all_tiles[self.player_location].name == "Evil Temple":
+        if self.player_location.name == "Evil Temple":
             self.has_zombie_totem = True
             return True
         else:
             return False
 
     def bury_totem(self):
-        if self.all_tiles[self.player_location].name == "Graveyard":
+        if self.player_location.name == "Graveyard":
             if self.player_location.zombies == 0:
                 if self.has_zombie_totem:
                     return True
