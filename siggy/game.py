@@ -15,7 +15,7 @@ class Game:
     devcard_controller = None
 
     # player variables
-    player_location = 'Foyer'
+    player_location = None
     player_health = 6
     player_attack = 1
     player_item = ""
@@ -26,7 +26,7 @@ class Game:
     card_count = 0
 
     def __init__(self):
-
+        print("Hi");
         # Load rooms
         foyer = Tile('Foyer', 'Dining Room', 'blocked', 'blocked', 'blocked')
         dining_room = Tile('Dining Room', 'Patio', 'Evil Temple', 'Foyer', 'blocked')
@@ -53,17 +53,24 @@ class Game:
         self.devcard_controller = Devcard()
 
 
+
+
+        self.player_location = self.all_tiles['Foyer']
+        print(self.player_location.name)
+
         # display initial game state
         self.display_game_state()
-
 
     # returns message if given
     def withdraw_devcard(self):
         cardInfo = self.devcard_controller.pick_card()
+        print(str(cardInfo[0]))
         if cardInfo[0] == 0:
-            self.all_tiles[self.player_location].item = cardInfo[1]
+            self.player_location.item = cardInfo[1]
+            print(cardInfo[1])
         if cardInfo[0] == 1:
-            self.all_tiles[self.player_location].zombies = cardInfo[1]
+            self.player_location.zombies = cardInfo[1]
+            print(str(cardInfo[1]))
         if cardInfo[0] == 2:
             return print(cardInfo[1])
         self.update_game_time()
@@ -78,22 +85,22 @@ class Game:
     def display_game_state(self):
 
         # print locaiton and time information
-        print("Location " + self.player_location + ", Time " + str(self.game_time) + ".00pm")
+        print("Location " + self.player_location.name + ", Time " + str(self.game_time) + ".00pm")
 
         # print item information
-        if (self.all_tiles[self.player_location].item == ""):
+        if (self.player_location.item == ""):
             print("There is no item on the floor")
         else:
-            print("There is a " + self.all_tiles[self.player_location].item + " on the floor")
+            print("There is a " + self.player_location.item + " on the floor")
 
         # number of zombies in the room
-        print("There is " + str(self.all_tiles[self.player_location].zombies) + " zombies in the room")
+        print("There is " + str(self.player_location.zombies) + " zombies in the room")
 
         # movement options
-        print("North there is " + self.all_tiles[self.player_location].north + ", East there is " +
-              self.all_tiles[self.player_location].east + ", South there is " +
-              self.all_tiles[self.player_location].south + ", West there is " +
-              self.all_tiles[self.player_location].west)
+        print("North there is " + self.player_location.direction['North'] + ", East there is " +
+              self.player_location.direction['East'] + ", South there is " +
+              self.player_location.direction['South'] + ", West there is " +
+              self.player_location.direction['West'])
 
         # print health and attack strength
         print("Your health is " + str(self.player_health) + ", Your attack is " + str(self.player_attack))
@@ -111,7 +118,6 @@ class Game:
             print("Your have the Zombie Totem")
 
 
-
     # move_player(String direction)
     #   takes movement direction as a string of either (north; east; south; west)
     #
@@ -119,29 +125,13 @@ class Game:
     #   returns True is movement is successful
     #
     def move_player(self, direction):
-        if (self.all_tiles[self.player_location].zombies != 0):
+        if (self.player_location.zombies != 0):
             return False
-        if (direction != 'north' and direction !=  'east' and direction !=  'south' and direction !=  'west'):
+        if (direction != 'North' and direction !=  'East' and direction !=  'South' and direction !=  'West'):
             return False
-        if (direction == 'north'):
-            if (self.all_tiles[self.player_location].north != 'blocked'):
-                self.player_location = self.all_tiles[self.player_location].north
-            else: return False
-        if (direction == 'east'):
-            if (self.all_tiles[self.player_location].east != 'blocked'):
-                self.player_location = self.all_tiles[self.player_location].east
-            else: return False
-        if (direction == 'south'):
-            if (self.all_tiles[self.player_location].south != 'blocked'):
-                self.player_location = self.all_tiles[self.player_location].south
-            else: return False
-        if (direction == 'west'):
-            if (self.all_tiles[self.player_location].west != 'blocked'):
-                self.player_location = self.all_tiles[self.player_location].west
-            else: return False
-        # if player moved update game state
+        if (self.player_location.direction[direction] != 'blocked'):
+            self.player_location = self.all_tiles[self.player_location.direction[direction]]
         self.withdraw_devcard()
-        self.display_game_state()
         return True
 
 
@@ -153,14 +143,13 @@ class Game:
     #
     def get_item(self):
         # check an item is present
-        if (self.all_tiles[self.player_location].item == ""):
+        if (self.player_location.item == ""):
             return False
         # set new item
-        self.player_item = self.all_tiles[self.player_location].item
+        self.player_item = self.player_location.item
         # set new attack strength
         self.player_attack = 1 + self.all_items[self.player_item]
-        self.all_tiles[self.player_location].item = ""
-        self.display_game_state()
+        self.player_location.item = ""
         return True
 
 
@@ -171,19 +160,19 @@ class Game:
     #   returns True if items has been pickedup
     #
     def attack(self):
-        if (self.all_tiles[self.player_location].zombies == 0):
+        if (self.player_location.zombies == 0):
             return False
         # calculate health lost
-        health_lost = self.all_tiles[self.player_location].zombies - self.player_attack
+        health_lost = self.player_location.zombies - self.player_attack
         # cap health lost to 4 points
         if (health_lost > 4): health_lost = 4
         # update health
         self.player_health = self.player_health - health_lost
         # update zombies in room
-        self.all_tiles[self.player_location].zombies = 0
+        self.player_location.zombies = 0
 
         self.check_game_end_condition()
-        self.display_game_state()
+        return True
 
 
     # check_game_end_condition()
@@ -216,51 +205,37 @@ class Game:
 
 
     def run(self, direction):
-        if (self.all_tiles[self.player_location].zombies == 0):
+        if (self.player_location.zombies == 0):
             return False
-        if (direction != 'north' and direction !=  'east' and direction !=  'south' and direction !=  'west'):
+        if (direction != 'North' and direction !=  'East' and direction !=  'South' and direction !=  'West'):
             return False
-        if (direction == 'north'):
-            if (self.all_tiles[self.player_location].north != 'blocked'):
-                self.player_location = self.all_tiles[self.player_location].north
-            else: return False
-        if (direction == 'east'):
-            if (self.all_tiles[self.player_location].east != 'blocked'):
-                self.player_location = self.all_tiles[self.player_location].east
-            else: return False
-        if (direction == 'south'):
-            if (self.all_tiles[self.player_location].south != 'blocked'):
-                self.player_location = self.all_tiles[self.player_location].south
-            else: return False
-        if (direction == 'west'):
-            if (self.all_tiles[self.player_location].west != 'blocked'):
-                self.player_location = self.all_tiles[self.player_location].west
-            else: return False
-        self.all_tiles[self.player_location].zombies = 0
+        if (self.player_location.direction[direction] != 'blocked'):
+            self.player_location = self.all_tiles[self.player_location.direction[direction]]
+        self.player_location.zombies = 0
         self.player_health -= 1
         self.withdraw_devcard()
-        self.display_game_state()
         return True
+
 
     def cower(self):
-        if (self.all_tiles[self.player_location].zombies != 0):
+        if (self.player_location.zombies != 0):
             return False
         self.player_health += 3
-        self.display_game_state()
+        self.update_game_time()
         return True
 
+
     def get_totem(self):
-        if (self.player_location != 'Evil Temple'):
+        if (self.player_location.name != 'Evil Temple'):
             return False
         self.has_zombie_totem = True;
-        self.display_game_state()
         return True
 
 
     def bury_totem(self):
-        if (self.player_location != 'Graveyard'):
+        if (self.player_location.name != 'Graveyard'):
             return False
-        if (self.all_tiles[self.player_location].zombies != 0):
+        if (self.player_location.zombies != 0):
             return False
         if (self.has_zombie_totem == True):
             print("You win. The veil of darkness has lifted, the smell of death leaves!!")

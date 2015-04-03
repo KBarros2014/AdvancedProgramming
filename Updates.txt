@@ -20,4 +20,14 @@ if (direction != 'north' and direction !=  'east' and direction !=  'south' and 
     self.player_location = self.all_tiles[self.player_location].connections[direction]
 
 
+Another update as per Misa's code.
+
+String player_location
+
+on the class diagram is now this
+
+Tile player_location
+
+Make sure to code to this.
+
 Siggy.

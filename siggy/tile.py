@@ -6,9 +6,6 @@ class Tile:
     def __init__(self, name = "", north = "", east = "", south = "", west = "", item = "", zombies = 0):
         self.type = False
         self.name = name
-        self.north = north
-        self.east = east
-        self.south = south
-        self.west = west
+        self.direction = {"North": north, "South": south, "East": east, "West": west}
         self.zombies = zombies
         self.item = item
