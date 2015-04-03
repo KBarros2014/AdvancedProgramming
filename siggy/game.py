@@ -89,10 +89,10 @@ class Game:
               ' zombies in the room')
 
         # movement options
-        print('North there is ' + self.player_location.direction['North'] +
-              ', East there is ' +
-              self.player_location.direction['East'] + ', South there is ' +
-              self.player_location.direction['South'] + ', West there is ' +
+        print('North room is ' + self.player_location.direction['North'] +
+              ', East room is ' +
+              self.player_location.direction['East'] + ', South room is ' +
+              self.player_location.direction['South'] + ', West room is ' +
               self.player_location.direction['West'])
 
         # print health and attack strength
