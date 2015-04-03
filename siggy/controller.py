@@ -1,6 +1,9 @@
 __author__ = 'siggyzee'
 import cmd
+import pickle
+
 from siggy.game import *
+
 
 class main_cmd(cmd.Cmd):
 
@@ -20,6 +23,7 @@ class main_cmd(cmd.Cmd):
             print("You move " + direction + ".")
             self.game.display_game_state()
 
+
     def do_run(self, direction):
         print("run ", direction)
         result = self.game.run(direction)
@@ -27,6 +31,7 @@ class main_cmd(cmd.Cmd):
         if (result == True):
             print("You run " + direction + ".")
             self.game.display_game_state()
+
 
     def do_attack(self, line):
         print("attack")
@@ -36,6 +41,7 @@ class main_cmd(cmd.Cmd):
             print("You survived the zombie attack!!")
             self.game.display_game_state()
 
+
     def do_cower(self, line):
         print("cower")
         result = self.game.cower()
@@ -43,6 +49,7 @@ class main_cmd(cmd.Cmd):
         if (result == True):
             print("You cower and regain +3 health.")
             self.game.display_game_state()
+
 
     def do_get_item(self, line):
         print("get_item")
@@ -61,12 +68,14 @@ class main_cmd(cmd.Cmd):
             print("You picked up the Zombie totem")
             self.game.display_game_state()
 
+
     def do_bury_totem(self, line):
         print("bury totem")
         result = self.game.bury_totem()
         if (result == False): print("You can only bury the totem in the Graveyard when there are no Zombies.")
         if (result == True):
             print("Something is BOKE this should never EVER happen WTF have you done!!!!")
+
 
     def do_help(self, line):
         print("Zimp - Help")
@@ -83,8 +92,29 @@ class main_cmd(cmd.Cmd):
         print("quit			    - Quit game.")
         print("")
 
+
+    def do_save(self, save_string):
+        if (save_string) == '':
+            print('You must enter a file name and/or path to save too relative to the current directory.')
+            print('Eg. ./save/myGameData.dat')
+        else:
+            output_file = open('save_string', 'wb')
+            pickle.dump(self.game, output_file, pickle.HIGHEST_PROTOCOL)
+            print('File saved to ' + save_string)
+
+
+    def do_load(self, load_string):
+        try:
+            input_file = open('load_string', 'rb')
+            self.game = pickle.load(input_file)
+            print('Loaded game from ' + load_string)
+        except (IOError, pickle.UnpicklingError):
+            print('There was an error loading your file, please check the path and file format are correct.')
+
+
     def do_quit(self, line):
         return True
+
 
 def main():
     cmd_temp = main_cmd()
