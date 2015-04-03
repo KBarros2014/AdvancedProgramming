@@ -30,4 +30,8 @@ Tile player_location
 
 Make sure to code to this.
 
+
+Also please regularly push your code onto github reguardless of it's completedness. We need to be able to compare code
+there is no point in writing all your code if it doesn't sync with other peoples.
+
 Siggy.
