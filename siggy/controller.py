@@ -3,11 +3,13 @@ import cmd
 from siggy.game import *
 
 class main_cmd(cmd.Cmd):
-    intro = 'Welcome to Zimp 0.1, please type new for a new game'
 
-    def new_game(self):
-        print("hi")
+    def __init__(self):
+        cmd.Cmd.__init__(self)
+        self.intro = "Welcome to Zimp 0.1 \n"
+        self.prompt = "Enter your command: \n"
         self.game = Game()
+        self.game.display_game_state()
 
 
     def do_move(self, direction):
@@ -86,7 +88,6 @@ class main_cmd(cmd.Cmd):
 
 def main():
     cmd_temp = main_cmd()
-    cmd_temp.new_game()
     cmd_temp.cmdloop()
 
 

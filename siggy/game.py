@@ -47,18 +47,10 @@ class Game:
         self.all_items['Chainsaw'] = 3
         self.all_items['Machete'] = 2
 
-
         # load Devcard_controller
         self.devcard_controller = Devcard()
 
-
-
-
         self.player_location = self.all_tiles['Foyer']
-        print(self.player_location.name)
-
-        # display initial game state
-
 
     # returns message if given
     def withdraw_devcard(self):
@@ -115,6 +107,7 @@ class Game:
             print("Your don't have the Zombie Totem")
         else:
             print("Your have the Zombie Totem")
+        print('')
 
 
     # move_player(String direction)
