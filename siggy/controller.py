@@ -113,10 +113,17 @@ class controller(cmd.Cmd):
                   'to save too relative to the current directory.')
             print('Eg. ./save/myGameData.dat')
         else:
-            output_file = open(save_string, 'wb')
-            pickle.dump(self.game, output_file)
-            print('File saved to ' + save_string)
-            output_file.close()
+            try:
+
+                # TODO code for figuring out and creating new directories to go here
+
+                output_file = open(save_string, 'wb')
+                pickle.dump(self.game, output_file)
+                print('File saved to ' + save_string)
+                output_file.close()
+            except FileNotFoundError as err:
+                print(err)
+                print("You entered and invalid file string.")
 
     def do_load(self, load_string):
         try:

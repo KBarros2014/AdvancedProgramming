@@ -7,3 +7,5 @@ class Tile:
         self.name = name
         self.direction = {"North": north, "South": south,
                           "East": east, "West": west}
+        self.item = ''
+        self.zombies = 0
