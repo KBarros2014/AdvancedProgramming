@@ -31,7 +31,7 @@ class Game:
                            'blocked', 'Dining Room')
         patio = Tile('Patio', 'Yard', 'blocked', 'Dining Room', 'blocked')
         yard = Tile('Yard', 'blocked', 'blocked', 'Patio',
-                    'Graveyard', 'Board with Nails')
+                    'Graveyard')
         grave_yard = Tile('Graveyard', 'blocked', 'Yard', 'blocked', 'blocked')
         self.all_tiles[foyer.name] = foyer
         self.all_tiles[dining_room.name] = dining_room
