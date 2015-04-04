@@ -3,21 +3,20 @@ import cmd
 import pickle
 import getopt
 import sys
+import argparse
 
 from siggy.game import *
 
 
 class controller(cmd.Cmd):
-    def __init__(self, load_game, path):
+    def __init__(self):
         cmd.Cmd.__init__(self)
         self.intro = 'Welcome to Zimp 0.1 \n'
         self.prompt = 'Enter your command: \n'
-        if (load_game):
-            if (not self.do_load(path)):
-                sys.exit()
-        else:
-            self.game = Game()
-            self.game.display_game_state()
+        self.game = Game()
+
+    def start_game(self):
+        self.game.display_game_status()
 
     def do_move(self, direction):
         print('move', direction)
@@ -27,7 +26,7 @@ class controller(cmd.Cmd):
                   ' zombies in the room.')
         else:
             print('You move ' + direction + '.')
-            self.game.display_game_state()
+            self.game.display_game_status()
 
     def do_run(self, direction):
         print('run ', direction)
@@ -37,7 +36,7 @@ class controller(cmd.Cmd):
                   ' zombies in the room.')
         else:
             print('You run ' + direction + '.')
-            self.game.display_game_state()
+            self.game.display_game_status()
 
     def do_attack(self, line):
         print('attack')
@@ -46,7 +45,7 @@ class controller(cmd.Cmd):
             print('You can\'t attack when there are no zombies.')
         else:
             print('You survived the zombie attack!!')
-            self.game.display_game_state()
+            self.game.display_game_status()
 
     def do_cower(self, line):
         print('cower')
@@ -55,7 +54,7 @@ class controller(cmd.Cmd):
             print('You cower when there is zombies in the room.')
         else:
             print('You cower and regain +3 health.')
-            self.game.display_game_state()
+            self.game.display_game_status()
 
     def do_get_item(self, line):
         print('get_item')
@@ -64,7 +63,7 @@ class controller(cmd.Cmd):
             print('There is no item in the current room.')
         else:
             print('You picked up the item')
-            self.game.display_game_state()
+            self.game.display_game_status()
 
     def do_get_totem(self, line):
         print('get totem')
@@ -74,7 +73,7 @@ class controller(cmd.Cmd):
                   ' in the Evil Temple and there are no Zombies.')
         else:
             print('You picked up the Zombie totem')
-            self.game.display_game_state()
+            self.game.display_game_status()
 
     def do_bury_totem(self, line):
         print('bury totem')
@@ -123,14 +122,14 @@ class controller(cmd.Cmd):
                 output_file.close()
             except FileNotFoundError as err:
                 print(err)
-                print("You entered and invalid file string.")
+                print("You entered an invalid file string.")
 
     def do_load(self, load_string):
         try:
             input_file = open(load_string, 'rb')
             self.game = pickle.load(input_file)
             print('Loaded game from ' + load_string)
-            self.game.display_game_state()
+            self.game.display_game_status()
         except (IOError, pickle.UnpicklingError):
             print('There was an error loading your file ' +
                   load_string + ', please check the path' +
@@ -142,33 +141,20 @@ class controller(cmd.Cmd):
 
 
 def main():
-    load_game = False
-    path = ''
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], 'l:h', ['load=', 'help'])
-    except getopt.GetoptError as err:
-        print(err)
-        usage()
-        sys.exit()
-    for o, a in opts:
-        if o in ('-h', '--help'):
-            usage()
-            sys.exit()
-        elif o in ('-l', '--load'):
-            load_game = True
-            path = a
-    cmd_temp = controller(load_game, path)
-    cmd_temp.cmdloop()
-
-
-def usage():
-    print('Zombie in my pocket - Commandline Help')
-    print('')
-    print('Usage: zimp.py [--option <path>\']')
-    print('')
-    print('Options')
-    print('     -h      --help      Print this help information.')
-    print('     -l      --load      Load saved game from <path>.')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--new', help='Begin a new game',
+                        action='store_true')
+    parser.add_argument('-l', '--load', help='Load a saved game' +
+                                             ' from <path>')
+    args = parser.parse_args()
+    if args.new:
+        cmd_temp = controller()
+        cmd_temp.start_game()
+        cmd_temp.cmdloop()
+    if args.load != "":
+        cmd_temp = controller()
+        cmd_temp.do_load(args.load)
+        cmd_temp.cmdloop()
 
 
 if __name__ == '__main__':

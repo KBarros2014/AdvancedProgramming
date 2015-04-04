@@ -66,12 +66,7 @@ class Game:
         if cardInfo[0] == 2:
             return print(cardInfo[1])
 
-    # display_game_state
-    #
-    # print out the current game state as per specification in google doc file
-    # https://docs.google.com/document/d/1a9QeibvSWzbfF02yLp4au0XBqy3PZAAp66WyF5A4Nt0/edit
-    #
-    def display_game_state(self):
+    def display_game_status(self):
 
         # print locaiton and time information
         print('Location ' + self.player_location.name +
@@ -120,6 +115,8 @@ class Game:
         if (self.player_location.direction[direction] != 'blocked'):
             self.player_location = self.all_tiles[
                 self.player_location.direction[direction]]
+        else:
+            return False
         self.withdraw_devcard()
         return True
 
@@ -176,6 +173,8 @@ class Game:
         if (self.player_location.direction[direction] != 'blocked'):
             self.player_location = self.all_tiles[
                 self.player_location.direction[direction]]
+        else:
+            return False
         self.player_location.zombies = 0
         self.player_health -= 1
         self.withdraw_devcard()
@@ -205,12 +204,3 @@ class Game:
             sys.exit()
         return False
 
-
-def main():
-    devcard_controller = Devcard()
-    print(devcard_controller.pick_card())
-
-    print('Hi')
-
-if __name__ == '__main__':
-    main()
