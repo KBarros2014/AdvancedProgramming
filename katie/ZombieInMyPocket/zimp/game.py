@@ -92,5 +92,11 @@ class Game:
         pass
 
     def bury_totem(self):
-        pass
+        if self.player_location = all_tiles[5]:
+            if self.zombies_in_the_room:
+                if self.player_has_totem:
+                    print("you have won the game")
+                    return True
+        else:
+            return False
 
