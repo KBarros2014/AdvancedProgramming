@@ -89,7 +89,11 @@ class Game:
         pass
 
     def get_totem(self):
-        pass
+        if self.player_location == all_tiles[2]:
+            self.has_zombie_totem = True
+                return True
+        else :
+            return False
 
     def bury_totem(self):
         if self.player_location = all_tiles[5]:
