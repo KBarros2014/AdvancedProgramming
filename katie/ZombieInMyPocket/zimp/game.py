@@ -47,7 +47,12 @@ class Game:
     def withdraw_devCard(self):
         random_card = self.devcard.pick_card()
         if random_card == 0 :
-            self.item 
+            self.player_location.item = random_card[1]
+        elif: random_card ==1:
+            self.player_location_number_of_zombies = random_card[1]
+        else:
+            self.message
+            
 
 
     def display_game_state(self):
