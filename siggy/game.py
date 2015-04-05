@@ -1,6 +1,4 @@
 __author__ = 'siggyzee'
-from enum import Enum
-
 from siggy.tile import Tile
 from siggy.devcard import Devcard
 import sys
@@ -53,7 +51,7 @@ class Game:
         self.player_location = self.all_tiles['Foyer']
 
     # returns message if given
-    def withdraw_devcard(self):
+    def withdraw_card(self):
         self.update_game_time()
         cardInfo = self.devcard_controller.pick_card()
         print(str(cardInfo[0]))
@@ -73,11 +71,8 @@ class Game:
               ', Time ' + str(self.game_time) + '.00pm')
 
         # print item information
-        if (self.player_location.item == ''):
-            print('There is no item on the floor')
-        else:
-            print('There is a ' + self.player_location.item +
-                  ' on the floor')
+        print('There is a ' + self.player_location.item +
+                ' on the floor')
 
         # number of zombies in the room
         print('There is ' + str(self.player_location.zombies) +
@@ -107,7 +102,7 @@ class Game:
             print('Your have the Zombie Totem')
         print('')
 
-    def move_player(self, direction):
+    def move(self, direction):
         if (self.player_location.zombies != 0):
             return False
         if (direction not in ('North', 'East', 'South', 'West')):
@@ -117,7 +112,7 @@ class Game:
                 self.player_location.direction[direction]]
         else:
             return False
-        self.withdraw_devcard()
+        self.withdraw_card()
         return True
 
     def get_item(self):
@@ -177,7 +172,7 @@ class Game:
             return False
         self.player_location.zombies = 0
         self.player_health -= 1
-        self.withdraw_devcard()
+        self.withdraw_card()
         return True
 
     def cower(self):
@@ -199,8 +194,5 @@ class Game:
         if (self.player_location.zombies != 0):
             return False
         if (self.has_zombie_totem):
-            print('You win. The veil of darkness has ' +
-                  'lifted, the smell of death leaves!!')
-            sys.exit()
+            return True
         return False
-

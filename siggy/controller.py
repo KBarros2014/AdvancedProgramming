@@ -1,8 +1,8 @@
 __author__ = 'siggyzee'
 import cmd
 import pickle
-import getopt
 import sys
+import os
 import argparse
 
 from siggy.game import *
@@ -11,7 +11,7 @@ from siggy.game import *
 class controller(cmd.Cmd):
     def __init__(self):
         cmd.Cmd.__init__(self)
-        self.intro = 'Welcome to Zimp 0.1 \n'
+        self.intro = 'Welcome to Zimp \n'
         self.prompt = 'Enter your command: \n'
         self.game = Game()
 
@@ -20,7 +20,7 @@ class controller(cmd.Cmd):
 
     def do_move(self, direction):
         print('move', direction)
-        result = self.game.move_player(direction)
+        result = self.game.move(direction.capitalize())
         if (not result):
             print('You can’t move in that direction or when there are' +
                   ' zombies in the room.')
@@ -30,7 +30,7 @@ class controller(cmd.Cmd):
 
     def do_run(self, direction):
         print('run ', direction)
-        result = self.game.run(direction)
+        result = self.game.run(direction.capitalize())
         if (not result):
             print('You can’t run in that direction or when there are no' +
                   ' zombies in the room.')
@@ -51,7 +51,7 @@ class controller(cmd.Cmd):
         print('cower')
         result = self.game.cower()
         if (not result):
-            print('You cower when there is zombies in the room.')
+            print('You can\'t cower when there is zombies in the room.')
         else:
             print('You cower and regain +3 health.')
             self.game.display_game_status()
@@ -82,8 +82,9 @@ class controller(cmd.Cmd):
             print('You can only bury the totem in the Graveyard when ' +
                   ' there are no Zombies.')
         else:
-            print('Something is BOKE this should never EVER happen WTF' +
-                  ' have you done!!!!')
+            print('You win. The veil of darkness has ' +
+                'lifted, the smell of death leaves!!')
+            sys.exit()
 
     def do_help(self, line):
         print('Zimp - Help')
@@ -113,16 +114,20 @@ class controller(cmd.Cmd):
             print('Eg. ./save/myGameData.dat')
         else:
             try:
-
-                # TODO code for figuring out and creating new directories to go here
+                # create directory if nto present
+                if (not os.path.exists(save_string)):
+                    os.makedirs(save_string)
 
                 output_file = open(save_string, 'wb')
                 pickle.dump(self.game, output_file)
-                print('File saved to ' + save_string)
+                print('Game saved to ' + save_string)
                 output_file.close()
             except FileNotFoundError as err:
                 print(err)
                 print("You entered an invalid file string.")
+            except IsADirectoryError as err:
+                print(err)
+                print("You must include a file extension.")
 
     def do_load(self, load_string):
         try:
