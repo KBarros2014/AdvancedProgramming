@@ -221,7 +221,7 @@ class Game():
         else:
             print ("You need to go to Evil Temple and "
                    "search for the Zombie Totem"
-                   "n========================\n")
+                   "\n========================\n")
 
     def attack(self):
         numbers_of_zombies = self.player_location.zombies
@@ -351,6 +351,13 @@ class DevCard():
 
 
 def main():
+    # Running from python IDE version
+    controller = Controller()
+    controller.start_game()
+    controller.cmdloop()
+
+    # Running from commandline version
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", "--new",
                         help="Start a new game", action='store_true')
@@ -368,6 +375,6 @@ def main():
         controller = Controller()
         controller.do_load(args.load)
         controller.cmdloop()
-
+    """
 if __name__ == '__main__':
     main()
