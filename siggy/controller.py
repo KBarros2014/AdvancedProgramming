@@ -150,16 +150,18 @@ def main():
     parser.add_argument('-n', '--new', help='Begin a new game',
                         action='store_true')
     parser.add_argument('-l', '--load', help='Load a saved game' +
-                                             ' from <path>')
+                                             ' from LOAD')
     args = parser.parse_args()
+    print(args)
     if args.new:
         cmd_temp = controller()
         cmd_temp.start_game()
         cmd_temp.cmdloop()
-    if args.load != "":
+    if args.load != None:
         cmd_temp = controller()
         cmd_temp.do_load(args.load)
         cmd_temp.cmdloop()
+    parser.print_help()
 
 
 if __name__ == '__main__':
