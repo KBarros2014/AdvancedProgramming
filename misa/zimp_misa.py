@@ -6,10 +6,10 @@ import sys
 import pickle
 import argparse
 
-
 class Controller(cmd.Cmd):
     def __init__(self):
         cmd.Cmd.__init__(self)
+        self.intro = "Welcome to ZIMP"
         self.prompt = "Enter your command: \n"
         self.game = Game()
 
@@ -21,79 +21,85 @@ class Controller(cmd.Cmd):
         Attack zombies in player's current location
         """
         if self.game.attack():
-            print ("\nYou survived the zombie attack")
+            print ("\nYou survived the zombie attack!!")
             self.game.display_game_status()
         else:
-            print ("\nFortunately there are no zombies here\n")
+            print ("\nYou can't attack when there are no zombies\n")
 
     def do_run(self, direction):
         """
         Type run <direction>
         """
-        if self.game.run(direction):
-            print ("\nYou ran away from the zombies. You got scratched!")
+        if self.game.run(direction.capitalize()):
+            print ("\nYou run " + direction)
             self.game.display_game_status()
         else:
-            print ("\nYou failed to run\n")
+            print ("You can't run in that direction or \n"
+            "when there are no zombies in the room\n")
 
     def do_cower(self, line):
         """
         Hide and heal 3 health points but lose some time.
         """
         if self.game.cower():
-            print ("\nYou hid in the corner and rested a while")
+            print ("\nYou cower and regain +3 health")
             self.game.display_game_status()
         else:
-            print ("\nThere are zombies here!\n")
+            print ("\nYou can't when there is zombies in the room\n")
 
     def do_move(self, direction):
         """
         Move player to north, south, east or west. Type move direction
         """
-        if self.game.move(direction):
+        if self.game.move(direction.capitalize()):
             print ("\nYou are moving to " + direction)
             self.game.display_game_status()
+        else:
+            print ("\nYou can't move in that direction or\n"
+            "when there are zombies in the room\n")
 
     def do_get_totem(self, line):
         """
         Retrieve the Zombie Totem(Only possible in Evil Temple)
         """
         if self.game.get_totem():
-            print ("\nYou found the Zombie Totem!!")
+            print ("\nYou picked up the zombie totem")
             self.game.display_game_status()
         else:
-            print ("\nThe Zombie Totem will be in the Evil Temple, "
-                   "not here!\n")
+            print ("\nThere is no totem in the current room\n")
 
     def do_bury_totem(self, line):
         """
         Bury the Zombie Totem(Only possible in Graveyard)
         """
         if self.game.bury_totem():
-            print ("\nYou have successfully buried the Zombie Totem!\n")
+            print ("\nYou win. The veil of darkness has lifted,\n"
+            "the smell of death leaves!!\n")
             sys.exit()
         else:
-            print ("\nYou can't do that!\n")
+            print ("\nYou can't bury the Zombie totem\n"
+            "unless you are in the Graveyard and there are no Zombies\n")
 
     def do_get_item(self, line):
         """
         Retrieve an item from the player's current location
         """
         if self.game.get_item():
+            print ("You picked up the item")
             self.game.display_game_status()
         else:
-            print ("\nYou couldn't find anything useful\n")
+            print ("\nThere is no item in the current room\n")
 
     def do_save(self, line):
         """
         Save the current game state to Save folder with given name.
         Uses savedata as default file name if no name given.
         """
-        if len(line) == 0:
+        if line == "":
             line = "Save/savedata"
         output = open(line, "wb")
         pickle.dump(self.game, output)
-        print("Game saved : " + line + "\n")
+        print("Game saved to " + line + "\n")
         output.close()
 
     def do_load(self, line):
@@ -101,37 +107,40 @@ class Controller(cmd.Cmd):
         Load the existing saved game state from Save folder
         """
         try:
-            if len(line) == 0:
+            if line == "":
                 line = "Save/savedata"
             loaded_game = open(line, "rb")
             self.game = pickle.load(loaded_game)
-            print("\nGame loaded : " + line)
+            print("\nGame loaded to " + line)
             self.game.display_game_status()
         except (IOError, pickle.UnpicklingError):
-            print('\nInvalid file name or file missing\n')
+            print("\nThere was an error loading your file <path>\n\
+            please check the path and the file format are correct\n")
 
     def do_quit(self, line):
         print ("Quitting")
         sys.exit()
 
     def do_help(self, line):
-        print ("move <Direction>	- Move player <Direction> \
-                run <Direction> 	- Escape zombies by running <Direction> \
-                attack			    - Attack zombies in current room \
-                cower			    - Hide in current room and not move this turn \
-                get_item		    - Retrieve weapon from current room \
-                get_totem		    - Retrieve totem (Only in Evil Temple) \
-                bury_totem		    - Bury totem (Only in graveyard) \
-                save			    - Save current game to <path> \
-                load                - Load the saved game <path> \
-                quit			    - Quit game \
-                help			    - Display this help file")
+        print ("move <Direction>    - Move player <Direction>. \n \
+                                    <Direction> = North, East, South, West.\n \
+                run <Direction>     - Escape zombies by running <Direction>. \n \
+                                    <Direction> = North, East, South, West. \n \
+                attack              - Attack zombies in current room. \n \
+                cower               - Hide in current room and \n \
+                                    not move this turn.\n \
+                get item            - Retrieve weapon from current room.\n \
+                get totem           - Retrieve totem (Only in Evil Temple).\n \
+                bury totem          - Bury totem (Only in graveyard).\n \
+                save <Path>         - Save current game to <path>.\n \
+                load <Path>         - Load game from <path>.\n \
+                quit                - Quit game.")
 
 
 class Game():
     def __init__(self):
         self.game_time = 9
-        self.count_cards = 0
+        self.card_count = 0
         self.all_tiles = {
             "Foyer":
                 Tile("Foyer",
@@ -174,7 +183,6 @@ class Game():
             self.player_item = self.player_location.item
             item_strength = self.all_items.get(self.player_item)
             self.player_attack += item_strength
-            print ("\nYou found a " + self.player_item)
             self.player_location.item = "nothing"
             self.update_game_time()
             return True
@@ -215,11 +223,11 @@ class Game():
                   self.player_location.zombies,
                   north_room, south_room, east_room, west_room))
         if self.has_zombie_totem:
-            print ("You have the Zombie Totem and "
+            print ("You have the Zombie Totem and\n"
                    "now you need to go to the Graveyard"
                    "\n========================\n")
         else:
-            print ("You need to go to Evil Temple and "
+            print ("You need to go to Evil Temple and\n"
                    "search for the Zombie Totem"
                    "\n========================\n")
 
@@ -239,11 +247,8 @@ class Game():
     def run(self, direction):
         current_room = self.player_location
         zombies_in_room = self.player_location.zombies
-        next_room = current_room.direction.get(direction.capitalize())
-        if direction != "north" and direction != "east" \
-                and direction != "south" and direction != "west":
-            print ("\nMove to where? Give direction: north, "
-                   "south, east or west\n")
+        next_room = current_room.direction.get(direction)
+        if (direction not in ('North', 'East', 'South', 'West')):
             return False
         if zombies_in_room > 0 and next_room is not "blocked":
             self.player_health -= 1
@@ -264,11 +269,8 @@ class Game():
     def move(self, direction):
         current_room = self.player_location
         zombies_in_room = self.player_location.zombies
-        next_room = current_room.direction.get(direction.capitalize())
-        if direction != "north" and direction != "east" \
-                and direction != "south" and direction != "west":
-            print ("\nMove to where? "
-                   "Give direction: north, south, east or west\n")
+        next_room = current_room.direction.get(direction)
+        if (direction not in ('North', 'East', 'South', 'West')):
             return False
         if zombies_in_room == 0 and next_room is not "blocked":
             self.player_location = self.all_tiles[next_room]
@@ -280,11 +282,10 @@ class Game():
 
     def check_game_end_condition(self):
         if self.player_health <= 0:
-            print("\nZombies have eaten your brains. Game over!\n")
+            print("\nZombies have eaten your brains - Game Over\n")
             sys.exit()
         elif self.game_time >= 12:
-            print("\nYou have run out of time "
-                  "and been overrun by the zombie horde. Game over!\n")
+            print("\nYou have been over run by the zombie horde - Game Over\n")
             sys.exit()
         return False
 
@@ -304,10 +305,10 @@ class Game():
             return False
 
     def update_game_time(self):
-        self.count_cards += 1
-        if self.count_cards >= 7:
+        self.card_count += 1
+        if self.card_count >= 7:
             self.game_time += 1
-            self.count_cards = 0
+            self.card_count = 0
             print ("\nIt is now %ipm" % self.game_time)
             self.check_game_end_condition()
 
@@ -352,9 +353,11 @@ class DevCard():
 
 def main():
     # Running from python IDE version
+
     controller = Controller()
     controller.start_game()
     controller.cmdloop()
+
 
     # Running from commandline version
     """
@@ -371,10 +374,13 @@ def main():
         controller.start_game()
         controller.cmdloop()
 
-    if args.load != "":
-        controller = Controller()
-        controller.do_load(args.load)
-        controller.cmdloop()
+    if args.load != None:
+        cmd_temp = Controller()
+        cmd_temp.do_load(args.load)
+        cmd_temp.cmdloop()
+    parser.print_help()
+
     """
+
 if __name__ == '__main__':
     main()

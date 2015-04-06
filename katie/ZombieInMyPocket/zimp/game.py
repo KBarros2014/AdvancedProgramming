@@ -46,15 +46,13 @@ class Game:
 
     def withdraw_devCard(self):
         random_card = self.devcard.pick_card()
-        if random_card[0] == 0:
+        if random_card == 0 :
             self.player_location.item = random_card[1]
-        elif random_card[0] == 1:
-            self.player_location.zombies = random_card[1]
+        elif: random_card ==1:
+            self.player_location_number_of_zombies = random_card[1]
         else:
-            print("\n" + random_card[1])
-
-            self.update_game_time()
-            self.check_game_end_condition()
+            self.message
+            
 
 
     def display_game_state(self):
@@ -91,8 +89,18 @@ class Game:
         pass
 
     def get_totem(self):
-        pass
+        if self.player_location == all_tiles[2]:
+            self.has_zombie_totem = True
+                return True
+        else :
+            return False
 
     def bury_totem(self):
-        pass
+        if self.player_location = all_tiles[5]:
+            if self.zombies_in_the_room:
+                if self.player_has_totem:
+                    print("you have won the game")
+                    return True
+        else:
+            return False
 
