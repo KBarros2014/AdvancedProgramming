@@ -72,7 +72,7 @@ class controller(cmd.Cmd):
             print('You can\'t retrieve the Zombie totem unless you are' +
                   ' in the Evil Temple and there are no Zombies.')
         else:
-            print('You picked up the Zombie totem')
+            print('You picked up the Zombie totem.')
             self.game.display_game_status()
 
     def do_bury_totem(self, line):
@@ -98,12 +98,12 @@ class controller(cmd.Cmd):
         print('cower		  	    - Hide in current room and not ' +
               'move this turn.')
         print('get_item		    - Retrieve weapon from current room.')
-        print('get_totem		    - Retrieve totem (Only possible' +
+        print('get_totem		    - Retrieve totem (Only' +
               ' in Evil Temple).')
-        print('bury_totem		    - Bury totem (Only possible in ' +
+        print('bury_totem		    - Bury totem (Only in ' +
               'graveyard).')
         print('save <path>		    - Save current game to <path>.')
-        print('load <path>		    - Save current game to <path>.')
+        print('load <path>		    - ZLoad game from <path>.')
         print('quit			    - Quit game.')
         print('')
 
@@ -114,10 +114,6 @@ class controller(cmd.Cmd):
             print('Eg. ./save/myGameData.dat')
         else:
             try:
-                # create directory if nto present
-                if (not os.path.exists(save_string)):
-                    os.makedirs(save_string)
-
                 output_file = open(save_string, 'wb')
                 pickle.dump(self.game, output_file)
                 print('Game saved to ' + save_string)
@@ -152,7 +148,6 @@ def main():
     parser.add_argument('-l', '--load', help='Load a saved game' +
                                              ' from LOAD')
     args = parser.parse_args()
-    print(args)
     if args.new:
         cmd_temp = controller()
         cmd_temp.start_game()
