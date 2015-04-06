@@ -77,8 +77,8 @@ class Controller(cmd.Cmd):
             "the smell of death leaves!!\n")
             sys.exit()
         else:
-            print ("\nYou can't retrieve the Zombie totem\n"
-            "unless you are in the Evil Temple and there are no Zombies\n")
+            print ("\nYou can't bury the Zombie totem\n"
+            "unless you are in the Graveyard and there are no Zombies\n")
 
     def do_get_item(self, line):
         """
@@ -114,26 +114,26 @@ class Controller(cmd.Cmd):
             print("\nGame loaded to " + line)
             self.game.display_game_status()
         except (IOError, pickle.UnpicklingError):
-            print('\nThere was an error loading your file <path>\n\
-            please check the path an file format are correct\n')
+            print("\nThere was an error loading your file <path>\n\
+            please check the path and the file format are correct\n")
 
     def do_quit(self, line):
         print ("Quitting")
         sys.exit()
 
     def do_help(self, line):
-        print ("help                - Display this help file.\
-                move <Direction>    - Move player <Direction>. \
-                                    <Direction> = North, East, South, West.\
-                run <Direction>     - Escape zombies by running <Direction>. \
-                                    <Direction> = North, East, South, West. \
-                attack              - Attack zombies in current room. \
-                cower               - Hide in current room and not move this turn.\
-                get item            - Retrieve weapon from current room.\
-                get totem           - Retrieve totem (Only in Evil Temple).\
-                bury totem          - Bury totem (Only in graveyard).\
-                save <Path>         - Save current game to <path>.\
-                load <Path>         - Load game from <path>.\
+        print ("move <Direction>    - Move player <Direction>. \n \
+                                    <Direction> = North, East, South, West.\n \
+                run <Direction>     - Escape zombies by running <Direction>. \n \
+                                    <Direction> = North, East, South, West. \n \
+                attack              - Attack zombies in current room. \n \
+                cower               - Hide in current room and \n \
+                                    not move this turn.\n \
+                get item            - Retrieve weapon from current room.\n \
+                get totem           - Retrieve totem (Only in Evil Temple).\n \
+                bury totem          - Bury totem (Only in graveyard).\n \
+                save <Path>         - Save current game to <path>.\n \
+                load <Path>         - Load game from <path>.\n \
                 quit                - Quit game.")
 
 
@@ -353,14 +353,14 @@ class DevCard():
 
 def main():
     # Running from python IDE version
-    """
+
     controller = Controller()
     controller.start_game()
     controller.cmdloop()
-    """
+
 
     # Running from commandline version
-
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", "--new",
                         help="Start a new game", action='store_true')
@@ -374,10 +374,13 @@ def main():
         controller.start_game()
         controller.cmdloop()
 
-    if args.load != "":
-        controller = Controller()
-        controller.do_load(args.load)
-        controller.cmdloop()
+    if args.load != None:
+        cmd_temp = Controller()
+        cmd_temp.do_load(args.load)
+        cmd_temp.cmdloop()
+    parser.print_help()
+
+    """
 
 if __name__ == '__main__':
     main()
