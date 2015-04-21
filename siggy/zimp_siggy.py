@@ -84,26 +84,41 @@ class controller(cmd.Cmd):
                   'lifted, the smell of death leaves!!')
             sys.exit()
 
-    def do_help(self, line):
-        print('Zimp - Help')
-        print('')
-        print('help			    - Display this help file.')
-        print('move <Direction>	- Move player <Direction>. <Direction> ' +
-              '= North, East, South, West')
+    def help_run(self):
         print('run <Direction> 	- Escape zombies by running <Direction>' +
               '. <Direction> = North, East, South, West')
+
+    def help_attack(self):
         print('attack			    - Attack zombies in current room.')
+
+    def help_cower(self):
         print('cower		  	    - Hide in current room and not ' +
               'move this turn.')
+
+    def help_get_item(self):
         print('get_item		    - Retrieve weapon from current room.')
+
+    def help_get_totem(self):
         print('get_totem		    - Retrieve totem (Only' +
               ' in Evil Temple).')
+
+    def help_bury_totem(self):
         print('bury_totem		    - Bury totem (Only in ' +
               'graveyard).')
+
+    def help_save(self):
         print('save <path>		    - Save current game to <path>.')
+
+    def help_load(self):
         print('load <path>		    - ZLoad game from <path>.')
+
+    def help_quit(self):
         print('quit			    - Quit game.')
-        print('')
+
+    def help_move(self):
+                print('move <Direction>	- Move player <Direction>. <Direction> ' +
+              '= North, East, South, West')
+
 
     def do_save(self, save_string):
         try:
@@ -235,37 +250,18 @@ class Game:
             return print(cardInfo[1])
 
     def display_game_status(self):
-
-        # print locaiton and time information
-        print('Location ' + self.player_location.name +
-              ', Time ' + str(self.game_time) + '.00pm')
-
-        # print item information
-        print('There is a ' + self.player_location.item +
-              ' on the floor')
-
-        # number of zombies in the room
-        print('There is ' + str(self.player_location.zombies) +
-              ' zombies in the room')
-
-        # movement options
-        print('North room is ' + self.player_location.direction['North'] +
-              ', East room is ' +
-              self.player_location.direction['East'] + ', South room is ' +
-              self.player_location.direction['South'] + ', West room is ' +
-              self.player_location.direction['West'])
-
-        # print health and attack strength
-        print('Your health is ' + str(self.player_health) +
-              ', Your attack is ' + str(self.player_attack))
-
-        # print current item
+        print('Location %s, Time %d.00pm' % (self.player_location.name, self.game_time))
+        print('There is a %s on the floor' % self.player_location.item)
+        print('There is %d zombies in the room' % self.player_location.zombies)
+        print('North room is %s, East room is %s, South room is %s, West room is %s'
+               % (self.player_location.direction['North'], self.player_location.direction['East'],
+                  self.player_location.direction['South'], self.player_location.direction['West']))
+        print('Your health is %d, Your attack is %d' % (self.player_health,
+                                                        self.player_attack))
         if (self.player_item == ''):
             print('Your not holding an item')
         else:
-            print('Your holding a ' + self.player_item)
-
-        # print the zombie totem
+            print('Your holding a %s' % self.player_item)
         if (not self.has_zombie_totem):
             print('Your don\'t have the Zombie Totem')
         else:
